@@ -29,7 +29,7 @@
 #
 Name:           janino
 Version:        2.5.15
-Release:        3%{dist}
+Release:        4%{dist}
 Summary:        An embedded Java compiler
 License:        BSD
 URL:            http://www.janino.net/
@@ -117,6 +117,9 @@ rm -rf $RPM_BUILD_ROOT
 %dir %{_javadocdir}/%{name}
 
 %changelog
+* Wed Feb 09 2011 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 2.5.15-4
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_15_Mass_Rebuild
+
 * Tue Oct 27 2009 Mary Ellen Foster <mefoster at gmail.com> - 2.5.15-3
 - Changed group tag on main package and sub-package
 - Fixed default attribute on files section
