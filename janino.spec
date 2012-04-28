@@ -29,21 +29,20 @@
 #
 Name:          janino
 Version:       2.6.1
-Release:       7%{?dist}
+Release:       11%{?dist}
 Summary:       An embedded Java compiler
 Group:         Development/Tools
 License:       BSD
 URL:           http://docs.codehaus.org/display/JANINO/Home
 Source0:       http://dist.codehaus.org/%{name}/%{name}-%{version}.zip
-Source1:       %{name}-%{version}-aggregator-01.pom
+Source1:       http://repo1.maven.org/maven2/org/codehaus/%{name}/%{name}-parent/%{version}/%{name}-parent-%{version}.pom
 Source2:       http://repo1.maven.org/maven2/org/codehaus/%{name}/commons-compiler/%{version}/commons-compiler-%{version}.pom
 Source3:       http://repo1.maven.org/maven2/org/codehaus/%{name}/commons-compiler-jdk/%{version}/commons-compiler-jdk-%{version}.pom
 Source4:       http://repo1.maven.org/maven2/org/codehaus/%{name}/%{name}/%{version}/%{name}-%{version}.pom
-
+# remove org.codehaus.mojo findbugs-maven-plugin 1.1.1, javancss-maven-plugin 2.0, jdepend-maven-plugin 2.0-beta-2
 # change artifactId ant-nodeps in ant
-Patch0:        %{name}-%{version}-pom.patch
+Patch0:        %{name}-%{version}-poms.patch
 
-BuildRequires: janino-parent
 BuildRequires: java-devel >= 1:1.6.0
 BuildRequires: jpackage-utils
 
@@ -63,8 +62,6 @@ BuildRequires: maven-surefire-plugin
 BuildRequires: maven-surefire-provider-junit4
 
 Requires:      ant
-Requires:      commons-compiler = %{version}
-Requires:      janino-parent
 
 Requires:      java >= 1:1.6.0
 Requires:      jpackage-utils
@@ -78,33 +75,6 @@ memory, load the bytecode and execute it directly in the same JVM. Janino
 is not intended to be a development tool, but an embedded compiler for
 run-time compilation purposes, e.g. expression evaluators or "server pages"
 engines like JSP.
-
-%package -n commons-compiler
-Group:         Development/Tools
-Summary:       Interfaces for an embedded Java compiler
-Requires:      janino-parent = %{version}
-Requires:      jpackage-utils
-
-%description -n commons-compiler
-This package declares interfaces for the implementation of 
-an org.codehaus.commons.compiler.IExpressionEvaluator,
-an org.codehaus.commons.compiler.IScriptEvaluator, 
-an org.codehaus.commons.compiler.IClassBodyEvaluator 
-and an org.codehaus.commons.compiler.ISimpleCompiler. 
-All of these adhere to the syntax of the Java programming language.
-
-%package -n commons-compiler-jdk
-Group:         Development/Tools
-Summary:       Commons Compiler Jdk
-Requires:      commons-compiler = %{version}
-Requires:      janino-parent = %{version}
-Requires:      jpackage-utils
-
-%description -n commons-compiler-jdk
-This package declares interfaces for the implementation of 
-an org.codehaus.commons.compiler.jdk.ExpressionEvaluator. 
-and consorts instead of org.codehaus.janino.ExpressionEvaluator;
-commons-compiler-jdk is an alternative of janino.
 
 %package javadoc
 Group:         Documentation
@@ -149,47 +119,47 @@ mvn-rpmbuild install javadoc:aggregate
 
 %install
 
-mkdir -p %{buildroot}%{_javadir}
-install -m 644 %{name}/target/%{name}-%{version}.jar %{buildroot}%{_javadir}/%{name}.jar
-
 mkdir -p %{buildroot}%{_mavenpomdir}
-install -m 644 %{name}/pom.xml %{buildroot}%{_mavenpomdir}/JPP-%{name}.pom
-%add_maven_depmap JPP-%{name}.pom %{name}.jar
+install -m 644 pom.xml %{buildroot}%{_mavenpomdir}/JPP.%{name}-parent.pom
+%add_maven_depmap JPP.%{name}-parent.pom
+
+mkdir -p %{buildroot}%{_javadir}/%{name}
 
 for m in \
   commons-compiler\
-  commons-compiler-jdk;do
-    install -m 644 ${m}/target/${m}-%{version}.jar %{buildroot}%{_javadir}/${m}.jar
-    install -m 644 ${m}/pom.xml %{buildroot}%{_mavenpomdir}/JPP-${m}.pom
-    %add_maven_depmap -f ${m} JPP-${m}.pom ${m}.jar
+  commons-compiler-jdk \
+  %{name};do
+    install -m 644 ${m}/target/${m}-%{version}.jar %{buildroot}%{_javadir}/%{name}/${m}.jar
+    install -m 644 ${m}/pom.xml %{buildroot}%{_mavenpomdir}/JPP.%{name}-${m}.pom
+    %add_maven_depmap JPP.%{name}-${m}.pom %{name}/${m}.jar
 done
 
 mkdir -p %{buildroot}%{_javadocdir}/%{name}
 cp -pr target/site/apidocs/* %{buildroot}%{_javadocdir}/%{name}
 
 %files
-%{_javadir}/%{name}.jar
-%{_mavenpomdir}/JPP-%{name}.pom
+%{_javadir}/%{name}/*.jar
+%{_mavenpomdir}/JPP.%{name}-*.pom
 %{_mavendepmapfragdir}/%{name}
 %doc new_bsd_license.txt README.txt
-
-%files -n commons-compiler
-%{_javadir}/commons-compiler.jar
-%{_mavenpomdir}/JPP-commons-compiler.pom
-%{_mavendepmapfragdir}/%{name}-commons-compiler
-%doc new_bsd_license.txt
-
-%files -n commons-compiler-jdk
-%{_javadir}/commons-compiler-jdk.jar
-%{_mavenpomdir}/JPP-commons-compiler-jdk.pom
-%{_mavendepmapfragdir}/%{name}-commons-compiler-jdk
-%doc new_bsd_license.txt
 
 %files javadoc
 %{_javadocdir}/%{name}
 %doc new_bsd_license.txt
 
 %changelog
+* Thu Apr 19 2012 gil cattaneo <puntogil@libero.it> 2.6.1-11
+- Remove janino-parent as a BuildRequirement
+
+* Wed Apr 18 2012 gil cattaneo <puntogil@libero.it> 2.6.1-10
+- moved all of the jar files into janino subdirectory
+
+* Wed Apr 18 2012 gil cattaneo <puntogil@libero.it> 2.6.1-9
+- merged commons-compiler, commons-compiler-jdk and janino-parent in main package
+
+* Wed Apr 18 2012 gil cattaneo <puntogil@libero.it> 2.6.1-8
+- add janino-parent
+
 * Mon Apr 16 2012 gil cattaneo <puntogil@libero.it> 2.6.1-7
 - Remove commons-compiler as a BuildRequirement
 - Add janino-parent as a Requirement
