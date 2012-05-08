@@ -29,7 +29,7 @@
 #
 Name:          janino
 Version:       2.6.1
-Release:       11%{?dist}
+Release:       12%{?dist}
 Summary:       An embedded Java compiler
 Group:         Development/Tools
 License:       BSD
@@ -45,6 +45,7 @@ Patch0:        %{name}-%{version}-poms.patch
 
 BuildRequires: java-devel >= 1:1.6.0
 BuildRequires: jpackage-utils
+BuildRequires: codehaus-parent
 
 BuildRequires: ant
 BuildRequires: junit4
@@ -148,6 +149,9 @@ cp -pr target/site/apidocs/* %{buildroot}%{_javadocdir}/%{name}
 %doc new_bsd_license.txt
 
 %changelog
+* Tue May 08 2012 gil cattaneo <puntogil@libero.it> 2.6.1-12
+- add codehaus-parent to BR
+
 * Thu Apr 19 2012 gil cattaneo <puntogil@libero.it> 2.6.1-11
 - Remove janino-parent as a BuildRequirement
 
