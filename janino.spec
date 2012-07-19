@@ -29,7 +29,7 @@
 #
 Name:          janino
 Version:       2.6.1
-Release:       12%{?dist}
+Release:       13%{?dist}
 Summary:       An embedded Java compiler
 Group:         Development/Tools
 License:       BSD
@@ -149,6 +149,9 @@ cp -pr target/site/apidocs/* %{buildroot}%{_javadocdir}/%{name}
 %doc new_bsd_license.txt
 
 %changelog
+* Thu Jul 19 2012 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 2.6.1-13
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_18_Mass_Rebuild
+
 * Tue May 08 2012 gil cattaneo <puntogil@libero.it> 2.6.1-12
 - add codehaus-parent to BR
 
