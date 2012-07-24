@@ -29,7 +29,7 @@
 #
 Name:          janino
 Version:       2.6.1
-Release:       13%{?dist}
+Release:       14%{?dist}
 Summary:       An embedded Java compiler
 Group:         Development/Tools
 License:       BSD
@@ -110,6 +110,10 @@ cp -p %{SOURCE2} commons-compiler/pom.xml
 cp -p %{SOURCE3} commons-compiler-jdk/pom.xml
 cp -p %{SOURCE4} %{name}/pom.xml
 
+# RHBZ #842604
+sed -i 's#<source>1.2</source>#<source>1.5</source>#' pom.xml
+sed -i 's#<target>1.1</target>#<target>1.5</target>#' pom.xml
+
 %patch0 -p1
 
 perl -pi -e 's/\r$//g' new_bsd_license.txt README.txt
@@ -149,6 +153,9 @@ cp -pr target/site/apidocs/* %{buildroot}%{_javadocdir}/%{name}
 %doc new_bsd_license.txt
 
 %changelog
+* Tue Jul 24 2012 gil cattaneo <puntogil@libero.it> 2.6.1-14
+- Rebuilt RHBZ #842604 (compile with -target 1.5 or greater)
+
 * Thu Jul 19 2012 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 2.6.1-13
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_18_Mass_Rebuild
 
