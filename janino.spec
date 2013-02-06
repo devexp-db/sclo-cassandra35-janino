@@ -29,7 +29,7 @@
 #
 Name:          janino
 Version:       2.6.1
-Release:       14%{?dist}
+Release:       15%{?dist}
 Summary:       An embedded Java compiler
 Group:         Development/Tools
 License:       BSD
@@ -51,7 +51,7 @@ BuildRequires: ant
 BuildRequires: junit4
 
 BuildRequires: buildnumber-maven-plugin
-BuildRequires: maven
+BuildRequires: maven-local
 BuildRequires: maven-compiler-plugin
 BuildRequires: maven-enforcer-plugin
 BuildRequires: maven-install-plugin
@@ -153,6 +153,10 @@ cp -pr target/site/apidocs/* %{buildroot}%{_javadocdir}/%{name}
 %doc new_bsd_license.txt
 
 %changelog
+* Wed Feb 06 2013 Java SIG <java-devel@lists.fedoraproject.org> - 2.6.1-15
+- Update for https://fedoraproject.org/wiki/Fedora_19_Maven_Rebuild
+- Replace maven BuildRequires with maven-local
+
 * Tue Jul 24 2012 gil cattaneo <puntogil@libero.it> 2.6.1-14
 - Rebuilt RHBZ #842604 (compile with -target 1.5 or greater)
 
