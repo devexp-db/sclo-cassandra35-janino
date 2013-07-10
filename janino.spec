@@ -29,9 +29,8 @@
 #
 Name:          janino
 Version:       2.6.1
-Release:       16%{?dist}
+Release:       17%{?dist}
 Summary:       An embedded Java compiler
-Group:         Development/Tools
 License:       BSD
 URL:           http://docs.codehaus.org/display/JANINO/Home
 Source0:       http://dist.codehaus.org/%{name}/%{name}-%{version}.zip
@@ -44,28 +43,17 @@ Source4:       http://repo1.maven.org/maven2/org/codehaus/%{name}/%{name}/%{vers
 Patch0:        %{name}-%{version}-poms.patch
 
 BuildRequires: java-devel >= 1:1.6.0
-BuildRequires: jpackage-utils
 BuildRequires: codehaus-parent
 
 BuildRequires: ant
-BuildRequires: junit4
+BuildRequires: junit
 
 BuildRequires: buildnumber-maven-plugin
 BuildRequires: maven-local
-BuildRequires: maven-compiler-plugin
 BuildRequires: maven-enforcer-plugin
-BuildRequires: maven-install-plugin
-BuildRequires: maven-jar-plugin
-BuildRequires: maven-javadoc-plugin
-BuildRequires: maven-resources-plugin
 BuildRequires: maven-source-plugin
-BuildRequires: maven-surefire-plugin
 BuildRequires: maven-surefire-provider-junit4
 
-Requires:      ant
-
-Requires:      java >= 1:1.6.0
-Requires:      jpackage-utils
 BuildArch:     noarch
 
 %description
@@ -78,9 +66,7 @@ run-time compilation purposes, e.g. expression evaluators or "server pages"
 engines like JSP.
 
 %package javadoc
-Group:         Documentation
 Summary:       Javadoc for %{name}
-Requires:      jpackage-utils
 
 %description javadoc
 This package contains javadoc for %{name}.
@@ -120,39 +106,23 @@ perl -pi -e 's/\r$//g' new_bsd_license.txt README.txt
 
 %build
 
-mvn-rpmbuild install javadoc:aggregate
+%mvn_build
 
 %install
+%mvn_install
 
-mkdir -p %{buildroot}%{_mavenpomdir}
-install -m 644 pom.xml %{buildroot}%{_mavenpomdir}/JPP.%{name}-parent.pom
-%add_maven_depmap JPP.%{name}-parent.pom
-
-mkdir -p %{buildroot}%{_javadir}/%{name}
-
-for m in \
-  commons-compiler\
-  commons-compiler-jdk \
-  %{name};do
-    install -m 644 ${m}/target/${m}-%{version}.jar %{buildroot}%{_javadir}/%{name}/${m}.jar
-    install -m 644 ${m}/pom.xml %{buildroot}%{_mavenpomdir}/JPP.%{name}-${m}.pom
-    %add_maven_depmap JPP.%{name}-${m}.pom %{name}/${m}.jar
-done
-
-mkdir -p %{buildroot}%{_javadocdir}/%{name}
-cp -pr target/site/apidocs/* %{buildroot}%{_javadocdir}/%{name}
-
-%files
-%{_javadir}/%{name}/*.jar
-%{_mavenpomdir}/JPP.%{name}-*.pom
-%{_mavendepmapfragdir}/%{name}
+%files -f .mfiles
+%dir %{_javadir}/%{name}
 %doc new_bsd_license.txt README.txt
 
-%files javadoc
-%{_javadocdir}/%{name}
+%files javadoc -f .mfiles-javadoc
 %doc new_bsd_license.txt
 
 %changelog
+* Wed Jul 10 2013 gil cattaneo <puntogil@libero.it> 2.6.1-17
+- switch to XMvn
+- minor changes to adapt to current guideline
+
 * Thu Feb 14 2013 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 2.6.1-16
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_19_Mass_Rebuild
 
