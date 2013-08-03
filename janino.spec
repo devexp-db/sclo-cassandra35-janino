@@ -29,7 +29,7 @@
 #
 Name:          janino
 Version:       2.6.1
-Release:       17%{?dist}
+Release:       18%{?dist}
 Summary:       An embedded Java compiler
 License:       BSD
 URL:           http://docs.codehaus.org/display/JANINO/Home
@@ -119,6 +119,9 @@ perl -pi -e 's/\r$//g' new_bsd_license.txt README.txt
 %doc new_bsd_license.txt
 
 %changelog
+* Sat Aug 03 2013 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 2.6.1-18
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_20_Mass_Rebuild
+
 * Wed Jul 10 2013 gil cattaneo <puntogil@libero.it> 2.6.1-17
 - switch to XMvn
 - minor changes to adapt to current guideline
