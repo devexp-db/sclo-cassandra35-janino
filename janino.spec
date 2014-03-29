@@ -48,7 +48,7 @@ BuildRequires: codehaus-parent
 BuildRequires: ant
 BuildRequires: junit
 
-BuildRequires: buildnumber-maven-plugin
+#BuildRequires: buildnumber-maven-plugin
 BuildRequires: maven-local
 BuildRequires: maven-enforcer-plugin
 BuildRequires: maven-source-plugin
@@ -103,6 +103,9 @@ sed -i 's#<target>1.1</target>#<target>1.5</target>#' pom.xml
 %patch0 -p1
 
 perl -pi -e 's/\r$//g' new_bsd_license.txt README.txt
+
+# Cannot run program "svn"
+%pom_remove_plugin :buildnumber-maven-plugin
 
 %build
 
