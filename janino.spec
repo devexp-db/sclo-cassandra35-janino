@@ -52,7 +52,7 @@ BuildRequires: junit
 BuildRequires: maven-local
 BuildRequires: maven-enforcer-plugin
 BuildRequires: maven-source-plugin
-BuildRequires: maven-surefire-provider-junit4
+BuildRequires: maven-surefire-provider-junit
 
 BuildArch:     noarch
 
