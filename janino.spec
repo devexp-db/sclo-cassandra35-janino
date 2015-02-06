@@ -29,7 +29,7 @@
 #
 Name:          janino
 Version:       2.6.1
-Release:       20%{?dist}
+Release:       21%{?dist}
 Summary:       An embedded Java compiler
 License:       BSD
 URL:           http://docs.codehaus.org/display/JANINO/Home
@@ -52,7 +52,6 @@ BuildRequires: junit
 BuildRequires: maven-local
 BuildRequires: maven-enforcer-plugin
 BuildRequires: maven-source-plugin
-BuildRequires: maven-surefire-provider-junit
 
 BuildArch:     noarch
 
@@ -116,12 +115,16 @@ perl -pi -e 's/\r$//g' new_bsd_license.txt README.txt
 
 %files -f .mfiles
 %dir %{_javadir}/%{name}
-%doc new_bsd_license.txt README.txt
+%doc README.txt
+%license new_bsd_license.txt
 
 %files javadoc -f .mfiles-javadoc
-%doc new_bsd_license.txt
+%license new_bsd_license.txt
 
 %changelog
+* Fri Feb 06 2015 gil cattaneo <puntogil@libero.it> 2.6.1-21
+- introduce license macro
+
 * Sat Jun 07 2014 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 2.6.1-20
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_21_Mass_Rebuild
 
