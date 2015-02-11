@@ -29,7 +29,7 @@
 #
 Name:          janino
 Version:       2.7.8
-Release:       1%{?dist}
+Release:       2%{?dist}
 Summary:       An embedded Java compiler
 License:       BSD
 URL:           http://docs.codehaus.org/display/JANINO/Home
@@ -38,6 +38,10 @@ Source1:       http://repo1.maven.org/maven2/org/codehaus/%{name}/%{name}-parent
 Source2:       http://repo1.maven.org/maven2/org/codehaus/%{name}/commons-compiler/%{version}/commons-compiler-%{version}.pom
 Source3:       http://repo1.maven.org/maven2/org/codehaus/%{name}/commons-compiler-jdk/%{version}/commons-compiler-jdk-%{version}.pom
 Source4:       http://repo1.maven.org/maven2/org/codehaus/%{name}/%{name}/%{version}/%{name}-%{version}.pom
+# removes the de.unkrig.commons.nullanalysis annotations
+# http://unkrig.de/w/Unkrig.de
+# https://svn.code.sf.net/p/loggifier/code/tags/loggifier_0.9.9.v20140430-1829/de.unkrig.commons.nullanalysis/
+Patch0:        %{name}-2.7.8-remove-nullanalysis-annotations.patch
 
 BuildRequires: ant
 BuildRequires: codehaus-parent
@@ -83,10 +87,12 @@ for m in commons-compiler \
   )
 done
 
-cp -p %{SOURCE1} pom.xml
-cp -p %{SOURCE2} commons-compiler/pom.xml
-cp -p %{SOURCE3} commons-compiler-jdk/pom.xml
-cp -p %{SOURCE4} %{name}/pom.xml
+%patch0 -p1
+
+install -m 644 %{SOURCE1} pom.xml
+install -m 644 %{SOURCE2} commons-compiler/pom.xml
+install -m 644 %{SOURCE3} commons-compiler-jdk/pom.xml
+install -m 644 %{SOURCE4} %{name}/pom.xml
 
 %pom_xpath_set "pom:dependencyManagement/pom:dependencies/pom:dependency[pom:groupId = 'org.apache.ant']/pom:artifactId" ant
 %pom_xpath_set "pom:dependencies/pom:dependency[pom:groupId = 'org.apache.ant']/pom:artifactId" ant %{name}
@@ -94,13 +100,6 @@ cp -p %{SOURCE4} %{name}/pom.xml
 # RHBZ#842604
 %pom_xpath_set "pom:build/pom:plugins/pom:plugin[pom:artifactId = 'maven-compiler-plugin']/pom:configuration/pom:source" 1.6
 %pom_xpath_set "pom:build/pom:plugins/pom:plugin[pom:artifactId = 'maven-compiler-plugin']/pom:configuration/pom:target" 1.6
-
-sed -i '/de.unkrig.commons.nullanalysis/d' \
- commons-compiler-jdk/src/org/codehaus/commons/compiler/jdk/package-info.java \
- commons-compiler-jdk/src/org/codehaus/commons/io/package-info.java
-sed -i '/NotNullByDefault/d' \
- commons-compiler-jdk/src/org/codehaus/commons/compiler/jdk/package-info.java \
- commons-compiler-jdk/src/org/codehaus/commons/io/package-info.java
 
 perl -pi -e 's/\r$//g' new_bsd_license.txt README.txt
 
@@ -128,6 +127,9 @@ perl -pi -e 's/\r$//g' new_bsd_license.txt README.txt
 %license new_bsd_license.txt
 
 %changelog
+* Wed Feb 11 2015 gil cattaneo <puntogil@libero.it> 2.7.8-2
+- remove nullanalysis annotations (with PATCH0)
+
 * Mon Feb 09 2015 gil cattaneo <puntogil@libero.it> 2.7.8-1
 - Update to 2.7.8
 
