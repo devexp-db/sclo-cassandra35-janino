@@ -29,7 +29,7 @@
 #
 Name:          janino
 Version:       2.7.8
-Release:       2%{?dist}
+Release:       3%{?dist}
 Summary:       An embedded Java compiler
 License:       BSD
 URL:           http://docs.codehaus.org/display/JANINO/Home
@@ -127,6 +127,9 @@ perl -pi -e 's/\r$//g' new_bsd_license.txt README.txt
 %license new_bsd_license.txt
 
 %changelog
+* Wed Jun 17 2015 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 2.7.8-3
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_23_Mass_Rebuild
+
 * Wed Feb 11 2015 gil cattaneo <puntogil@libero.it> 2.7.8-2
 - remove nullanalysis annotations (with PATCH0)
 
