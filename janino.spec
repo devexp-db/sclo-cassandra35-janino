@@ -29,10 +29,10 @@
 #
 Name:          janino
 Version:       2.7.8
-Release:       3%{?dist}
+Release:       4%{?dist}
 Summary:       An embedded Java compiler
 License:       BSD
-URL:           http://docs.codehaus.org/display/JANINO/Home
+URL:           http://unkrig.de/w/Janino
 Source0:       http://janino.net/download/%{name}-%{version}.zip
 Source1:       http://repo1.maven.org/maven2/org/codehaus/%{name}/%{name}-parent/%{version}/%{name}-parent-%{version}.pom
 Source2:       http://repo1.maven.org/maven2/org/codehaus/%{name}/commons-compiler/%{version}/commons-compiler-%{version}.pom
@@ -43,12 +43,11 @@ Source4:       http://repo1.maven.org/maven2/org/codehaus/%{name}/%{name}/%{vers
 # https://svn.code.sf.net/p/loggifier/code/tags/loggifier_0.9.9.v20140430-1829/de.unkrig.commons.nullanalysis/
 Patch0:        %{name}-2.7.8-remove-nullanalysis-annotations.patch
 
-BuildRequires: ant
-BuildRequires: codehaus-parent
-BuildRequires: junit
-
 BuildRequires: maven-local
-BuildRequires: maven-enforcer-plugin
+BuildRequires: mvn(junit:junit)
+BuildRequires: mvn(org.apache.ant:ant)
+BuildRequires: mvn(org.apache.maven.plugins:maven-enforcer-plugin)
+BuildRequires: mvn(org.codehaus:codehaus-parent:pom:)
 
 BuildArch:     noarch
 
@@ -94,12 +93,11 @@ install -m 644 %{SOURCE2} commons-compiler/pom.xml
 install -m 644 %{SOURCE3} commons-compiler-jdk/pom.xml
 install -m 644 %{SOURCE4} %{name}/pom.xml
 
-%pom_xpath_set "pom:dependencyManagement/pom:dependencies/pom:dependency[pom:groupId = 'org.apache.ant']/pom:artifactId" ant
-%pom_xpath_set "pom:dependencies/pom:dependency[pom:groupId = 'org.apache.ant']/pom:artifactId" ant %{name}
+%pom_change_dep -r :ant-nodeps :ant
 
 # RHBZ#842604
-%pom_xpath_set "pom:build/pom:plugins/pom:plugin[pom:artifactId = 'maven-compiler-plugin']/pom:configuration/pom:source" 1.6
-%pom_xpath_set "pom:build/pom:plugins/pom:plugin[pom:artifactId = 'maven-compiler-plugin']/pom:configuration/pom:target" 1.6
+%pom_xpath_set "pom:plugin[pom:artifactId = 'maven-compiler-plugin']/pom:configuration/pom:source" 1.6
+%pom_xpath_set "pom:plugin[pom:artifactId = 'maven-compiler-plugin']/pom:configuration/pom:target" 1.6
 
 perl -pi -e 's/\r$//g' new_bsd_license.txt README.txt
 
@@ -119,7 +117,6 @@ perl -pi -e 's/\r$//g' new_bsd_license.txt README.txt
 %mvn_install
 
 %files -f .mfiles
-%dir %{_javadir}/%{name}
 %doc README.txt
 %license new_bsd_license.txt
 
@@ -127,6 +124,11 @@ perl -pi -e 's/\r$//g' new_bsd_license.txt README.txt
 %license new_bsd_license.txt
 
 %changelog
+* Thu Oct 29 2015 gil cattaneo <puntogil@libero.it> 2.7.8-4
+- update URL field
+- remove duplicate files
+- use BRs mvn()-like
+
 * Wed Jun 17 2015 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 2.7.8-3
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_23_Mass_Rebuild
 
