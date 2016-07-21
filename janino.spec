@@ -29,7 +29,7 @@
 #
 Name:          janino
 Version:       2.7.8
-Release:       5%{?dist}
+Release:       6%{?dist}
 Summary:       An embedded Java compiler
 License:       BSD
 URL:           http://unkrig.de/w/Janino
@@ -48,6 +48,7 @@ BuildRequires: mvn(junit:junit)
 BuildRequires: mvn(org.apache.ant:ant)
 BuildRequires: mvn(org.apache.maven.plugins:maven-enforcer-plugin)
 BuildRequires: mvn(org.codehaus:codehaus-parent:pom:)
+BuildRequires: /usr/bin/perl
 
 BuildArch:     noarch
 
@@ -124,6 +125,9 @@ perl -pi -e 's/\r$//g' new_bsd_license.txt README.txt
 %license new_bsd_license.txt
 
 %changelog
+* Thu Jul 21 2016 gil cattaneo <puntogil@libero.it> 2.7.8-6
+- add missing BR
+
 * Thu Feb 04 2016 Fedora Release Engineering <releng@fedoraproject.org> - 2.7.8-5
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_24_Mass_Rebuild
 
