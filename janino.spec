@@ -1,3 +1,6 @@
+%{?scl:%scl_package janino}
+%{!?scl:%global pkg_name %{name}}
+
 # Copyright (c) 2000-2007, JPackage Project
 # All rights reserved.
 #
@@ -27,21 +30,21 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #
-Name:          janino
+Name:          %{?scl_prefix}janino
 Version:       2.7.8
-Release:       6%{?dist}
+Release:       7%{?dist}
 Summary:       An embedded Java compiler
 License:       BSD
 URL:           http://unkrig.de/w/Janino
-Source0:       http://janino.net/download/%{name}-%{version}.zip
-Source1:       http://repo1.maven.org/maven2/org/codehaus/%{name}/%{name}-parent/%{version}/%{name}-parent-%{version}.pom
-Source2:       http://repo1.maven.org/maven2/org/codehaus/%{name}/commons-compiler/%{version}/commons-compiler-%{version}.pom
-Source3:       http://repo1.maven.org/maven2/org/codehaus/%{name}/commons-compiler-jdk/%{version}/commons-compiler-jdk-%{version}.pom
-Source4:       http://repo1.maven.org/maven2/org/codehaus/%{name}/%{name}/%{version}/%{name}-%{version}.pom
+Source0:       http://%{pkg_name}.net/download/%{pkg_name}-%{version}.zip
+Source1:       http://repo1.maven.org/maven2/org/codehaus/%{pkg_name}/%{pkg_name}-parent/%{version}/%{pkg_name}-parent-%{version}.pom
+Source2:       http://repo1.maven.org/maven2/org/codehaus/%{pkg_name}/commons-compiler/%{version}/commons-compiler-%{version}.pom
+Source3:       http://repo1.maven.org/maven2/org/codehaus/%{pkg_name}/commons-compiler-jdk/%{version}/commons-compiler-jdk-%{version}.pom
+Source4:       http://repo1.maven.org/maven2/org/codehaus/%{pkg_name}/%{pkg_name}/%{version}/%{pkg_name}-%{version}.pom
 # removes the de.unkrig.commons.nullanalysis annotations
 # http://unkrig.de/w/Unkrig.de
 # https://svn.code.sf.net/p/loggifier/code/tags/loggifier_0.9.9.v20140430-1829/de.unkrig.commons.nullanalysis/
-Patch0:        %{name}-2.7.8-remove-nullanalysis-annotations.patch
+Patch0:        %{pkg_name}-2.7.8-remove-nullanalysis-annotations.patch
 
 BuildRequires: maven-local
 BuildRequires: mvn(junit:junit)
@@ -49,6 +52,7 @@ BuildRequires: mvn(org.apache.ant:ant)
 BuildRequires: mvn(org.apache.maven.plugins:maven-enforcer-plugin)
 BuildRequires: mvn(org.codehaus:codehaus-parent:pom:)
 BuildRequires: /usr/bin/perl
+%{?scl:Requires: %scl_runtime}
 
 BuildArch:     noarch
 
@@ -68,14 +72,14 @@ Summary:       Javadoc for %{name}
 This package contains javadoc for %{name}.
 
 %prep
-%setup -q
+%setup -q -n %{pkg_name}-%{version}
 
 find . -name "*.jar" -delete
 find . -name "*.class" -delete
 
 for m in commons-compiler \
   commons-compiler-jdk \
-  %{name};do
+  %{pkg_name};do
   mkdir -p ${m}/src
   (
     cd ${m}/src/
@@ -92,8 +96,9 @@ done
 install -m 644 %{SOURCE1} pom.xml
 install -m 644 %{SOURCE2} commons-compiler/pom.xml
 install -m 644 %{SOURCE3} commons-compiler-jdk/pom.xml
-install -m 644 %{SOURCE4} %{name}/pom.xml
+install -m 644 %{SOURCE4} %{pkg_name}/pom.xml
 
+%{?scl_enable}
 %pom_change_dep -r :ant-nodeps :ant
 
 # RHBZ#842604
@@ -109,13 +114,17 @@ perl -pi -e 's/\r$//g' new_bsd_license.txt README.txt
 %pom_remove_plugin :maven-deploy-plugin
 %pom_remove_plugin :maven-site-plugin
 %pom_remove_plugin :maven-source-plugin
+%{?scl_disable}
 
 %build
-
+%{?scl_enable}
 %mvn_build
+%{?scl_disable}
 
 %install
+%{?scl_enable}
 %mvn_install
+%{?scl_disable}
 
 %files -f .mfiles
 %doc README.txt
@@ -125,6 +134,9 @@ perl -pi -e 's/\r$//g' new_bsd_license.txt README.txt
 %license new_bsd_license.txt
 
 %changelog
+* Tue Sep 27 2016 Tomas Repik <trepik@redhat.com> - 2.7.8-7
+- scl conversion
+
 * Thu Jul 21 2016 gil cattaneo <puntogil@libero.it> 2.7.8-6
 - add missing BR
 
