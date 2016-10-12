@@ -30,31 +30,29 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #
-Name:          %{?scl_prefix}janino
-Version:       2.7.8
-Release:       7%{?dist}
-Summary:       An embedded Java compiler
-License:       BSD
-URL:           http://unkrig.de/w/Janino
-Source0:       http://%{pkg_name}.net/download/%{pkg_name}-%{version}.zip
-Source1:       http://repo1.maven.org/maven2/org/codehaus/%{pkg_name}/%{pkg_name}-parent/%{version}/%{pkg_name}-parent-%{version}.pom
-Source2:       http://repo1.maven.org/maven2/org/codehaus/%{pkg_name}/commons-compiler/%{version}/commons-compiler-%{version}.pom
-Source3:       http://repo1.maven.org/maven2/org/codehaus/%{pkg_name}/commons-compiler-jdk/%{version}/commons-compiler-jdk-%{version}.pom
-Source4:       http://repo1.maven.org/maven2/org/codehaus/%{pkg_name}/%{pkg_name}/%{version}/%{pkg_name}-%{version}.pom
+Name:		%{?scl_prefix}janino
+Version:	2.7.8
+Release:	8%{?dist}
+Summary:	An embedded Java compiler
+License:	BSD
+URL:		http://unkrig.de/w/Janino
+Source0:	http://%{pkg_name}.net/download/%{pkg_name}-%{version}.zip
+Source1:	http://repo1.maven.org/maven2/org/codehaus/%{pkg_name}/%{pkg_name}-parent/%{version}/%{pkg_name}-parent-%{version}.pom
+Source2:	http://repo1.maven.org/maven2/org/codehaus/%{pkg_name}/commons-compiler/%{version}/commons-compiler-%{version}.pom
+Source3:	http://repo1.maven.org/maven2/org/codehaus/%{pkg_name}/commons-compiler-jdk/%{version}/commons-compiler-jdk-%{version}.pom
+Source4:	http://repo1.maven.org/maven2/org/codehaus/%{pkg_name}/%{pkg_name}/%{version}/%{pkg_name}-%{version}.pom
 # removes the de.unkrig.commons.nullanalysis annotations
 # http://unkrig.de/w/Unkrig.de
 # https://svn.code.sf.net/p/loggifier/code/tags/loggifier_0.9.9.v20140430-1829/de.unkrig.commons.nullanalysis/
-Patch0:        %{pkg_name}-2.7.8-remove-nullanalysis-annotations.patch
+Patch0:		%{pkg_name}-2.7.8-remove-nullanalysis-annotations.patch
 
-BuildRequires: maven-local
-BuildRequires: mvn(junit:junit)
-BuildRequires: mvn(org.apache.ant:ant)
-BuildRequires: mvn(org.apache.maven.plugins:maven-enforcer-plugin)
-BuildRequires: mvn(org.codehaus:codehaus-parent:pom:)
-BuildRequires: /usr/bin/perl
+BuildRequires:	%{?scl_prefix_maven}maven-local
+BuildRequires:	%{?scl_prefix_maven}codehaus-parent
+BuildRequires:	/usr/bin/perl
+BuildRequires:	%{?scl_prefix_java_common}junit
 %{?scl:Requires: %scl_runtime}
 
-BuildArch:     noarch
+BuildArch:	noarch
 
 %description
 Janino is a super-small, super-fast Java compiler. Not only can it compile
@@ -66,7 +64,7 @@ run-time compilation purposes, e.g. expression evaluators or "server pages"
 engines like JSP.
 
 %package javadoc
-Summary:       Javadoc for %{name}
+Summary:	Javadoc for %{name}
 
 %description javadoc
 This package contains javadoc for %{name}.
@@ -98,7 +96,7 @@ install -m 644 %{SOURCE2} commons-compiler/pom.xml
 install -m 644 %{SOURCE3} commons-compiler-jdk/pom.xml
 install -m 644 %{SOURCE4} %{pkg_name}/pom.xml
 
-%{?scl_enable}
+%{?scl:scl enable %{scl_maven} %{scl} - << "EOF"}
 %pom_change_dep -r :ant-nodeps :ant
 
 # RHBZ#842604
@@ -114,17 +112,17 @@ perl -pi -e 's/\r$//g' new_bsd_license.txt README.txt
 %pom_remove_plugin :maven-deploy-plugin
 %pom_remove_plugin :maven-site-plugin
 %pom_remove_plugin :maven-source-plugin
-%{?scl_disable}
+%{?scl:EOF}
 
 %build
-%{?scl_enable}
+%{?scl:scl enable %{scl_maven} %{scl} - << "EOF"}
 %mvn_build
-%{?scl_disable}
+%{?scl:EOF}
 
 %install
-%{?scl_enable}
+%{?scl:scl enable %{scl_maven} %{scl} - << "EOF"}
 %mvn_install
-%{?scl_disable}
+%{?scl:EOF}
 
 %files -f .mfiles
 %doc README.txt
@@ -134,6 +132,9 @@ perl -pi -e 's/\r$//g' new_bsd_license.txt README.txt
 %license new_bsd_license.txt
 
 %changelog
+* Wed Oct 12 2016 Tomas Repik <trepik@redhat.com> - 2.7.8-8
+- use standard SCL macros
+
 * Tue Sep 27 2016 Tomas Repik <trepik@redhat.com> - 2.7.8-7
 - scl conversion
 
